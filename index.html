@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agri-Horti Schemes Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #eeeffc;
+    }
+
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h2 { margin: 0; }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 15px;
+      font-weight: bold;
+    }
+
+    nav a:hover { text-decoration: underline; }
+
+    .hero {
+      background: url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854') no-repeat center center/cover;
+      color: #472020;
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .section {
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    .schemes {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: white;
+      width: 300px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .details {
+      display: none;
+      margin-top: 15px;
+      text-align: left;
+      font-size: 14px;
+      background: #f4f9f4;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    footer {
+      background: #2e7d32;
+      color: white;
+      text-align: center;
+      padding: 15px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h2>🌾 Agri-Horti Schemes Portal</h2>
+
+  <nav>
+    <a href="#">Home</a>
+    <a href="#schemes">Schemes</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+    <a href="advancedfarmerdashboard.html">Market Analysis</a>
+    <button class="login-btn" onclick="login()">Login</button>
+    <a href="login.html">login</a>
+    <button class="logout-btn" id="logoutBtn" onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <h1>Empowering Farmers Through Government Schemes</h1>
+  <p>Find agriculture & horticulture schemes, subsidies, and support programs.</p>
+</section>
+
+<!-- SCHEMES SECTION -->
+<section class="section" id="schemes">
+  <h2>Popular Agriculture Schemes</h2>
+
+  <div class="schemes">
+
+    <!-- PM KISAN -->
+    <div class="card" onclick="toggleDetails('pmkisan')">
+      <img src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b">
+      <h3>PM-KISAN</h3>
+      <p>₹6000 per year financial support</p>
+
+      <div class="details" id="pmkisan">
+        <strong>Eligibility:</strong> Small & marginal farmers<br>
+        <strong>Benefit:</strong> ₹2000 in 3 installments<br>
+        <strong>Apply:</strong> pmkisan.gov.in
+      </div>
+    </div>
+
+    <!-- Crop Insurance -->
+    <div class="card" onclick="toggleDetails('insurance')">
+      <img src="https://images.unsplash.com/photo-1471193945509-9ad0617afabf">
+      <h3>PM Fasal Bima Yojana</h3>
+      <p>Crop loss insurance protection</p>
+
+      <div class="details" id="insurance">
+        <strong>Coverage:</strong> Natural calamities<br>
+        <strong>Premium:</strong> 2% for Kharif, 1.5% for Rabi<br>
+        <strong>Apply:</strong> pmfby.gov.in
+      </div>
+    </div>
+
+    <!-- Horticulture Mission -->
+    <div class="card" onclick="toggleDetails('nhm')">
+      <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6">
+      <h3>National Horticulture Mission</h3>
+      <p>Support for fruits & vegetables</p>
+
+      <div class="details" id="nhm">
+        <strong>Subsidy:</strong> Up to 50% for plantation<br>
+        <strong>Focus:</strong> Fruits, vegetables, spices<br>
+        <strong>Department:</strong> Ministry of Agriculture
+      </div>
+    </div>
+
+    <!-- Soil Health Card -->
+    <div class="card" onclick="toggleDetails('soil')">
+      <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2">
+      <h3>Soil Health Card Scheme</h3>
+      <p>Free soil testing & fertilizer advice</p>
+
+      <div class="details" id="soil">
+        <strong>Purpose:</strong> Improve soil fertility<br>
+        <strong>Benefit:</strong> Scientific fertilizer usage<br>
+        <strong>Issued By:</strong> Govt. of India
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <h2>About the Portal</h2>
+  <p>
+    This portal provides complete information about agriculture and horticulture
+    schemes available for farmers.
+  </p>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <h2>Contact Our Team</h2>
+  <p>Email: cropcoders@agriportal.in</p>
+  <p>Helpline: 1800-000-000</p>
+</section>
+
+<footer>
+  © 2026 Agri-Horti Schemes Portal | Designed for Farmers
+</footer>
+
+<script>
+function toggleDetails(id){
+  let element = document.getElementById(id);
+  element.style.display = element.style.display === "block" ? "none" : "block";
+}function login() {
+  window.location.href = "login.html";
+}
+
+function logout() {
+  alert("Logged Out Successfully!");
+  document.querySelector(".login-btn").style.display = "inline-block";
+  document.getElementById("logoutBtn").style.display = "none";
+}
+
+// Show logout button if logged in
+if(localStorage.getItem("loggedIn") === "true"){
+  document.querySelector(".login-btn").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "inline-block";
+}
+
+</script>
+
+</body>
+</html>

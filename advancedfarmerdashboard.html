@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Advanced Farmer Market Intelligence</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#f4f9f4;
+    }
+
+    header{
+      background:#2e7d32;
+      color:white;
+      padding:15px;
+      text-align:center;
+      font-size:20px;
+      font-weight:bold;
+    }
+
+    .container{
+      padding:30px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      margin-bottom:30px;
+      border-radius:10px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    select,input,button{
+      padding:8px;
+      margin:5px;
+      border-radius:5px;
+    }
+
+    button{
+      background:#2e7d32;
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+
+    #recommendation{
+      margin-top:10px;
+      font-weight:bold;
+      color:#1b5e20;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+🌾 Smart Farmer Market Intelligence Dashboard
+</header>
+
+<div class="container">
+
+<!-- MARKET FILTER -->
+<div class="card">
+<h2>📊 Market Analysis</h2>
+
+<label>Select Crop:</label>
+<select id="cropSelect">
+<option value="rice">Rice</option>
+<option value="wheat">Wheat</option>
+<option value="maize">Maize</option>
+</select>
+
+<label>Select Mandi:</label>
+<select id="mandiSelect">
+<option value="delhi">Delhi Mandi</option>
+<option value="kolkata">Kolkata Mandi</option>
+<option value="hyderabad">Hyderabad Mandi</option>
+</select>
+
+<button onclick="updateChart()">Analyze Market</button>
+
+<canvas id="marketChart"></canvas>
+
+<div id="recommendation"></div>
+
+
+
+
+<!-- PROFIT CALCULATOR -->
+<div class="card">
+<h2>💰 Profit Prediction Calculator</h2>
+
+<label>Production (Quintals):</label>
+<input type="number" id="production" placeholder="Enter quantity">
+
+<button onclick="calculateProfit()">Calculate Profit</button>
+
+<p id="profitResult"></p>
+
+</div>
+
+<button onclick="downloadReport()">📄 Download Market Report</button>
+
+</div>
+
+<script>
+
+// ---------------- DATA ----------------
+
+const mandiData = {
+  rice: {
+    delhi: [2100,2200,2300,2400,2500,2600],
+    kolkata: [2000,2100,2200,2300,2400,2500],
+    hyderabad: [2050,2150,2250,2350,2450,2550]
+  },
+  wheat: {
+    delhi: [1800,1850,1900,2000,2100,2200],
+    kolkata: [1700,1750,1800,1900,2000,2100],
+    hyderabad: [1750,1800,1850,1950,2050,2150]
+  },
+  maize: {
+    delhi: [1500,1550,1600,1650,1700,1750],
+    kolkata: [1400,1450,1500,1550,1600,1650],
+    hyderabad: [1450,1500,1550,1600,1650,1700]
+  }
+};
+
+const labels = ["Month1","Month2","Month3","Month4","Month5","Month6"];
+
+const ctx = document.getElementById("marketChart").getContext("2d");
+
+let marketChart = new Chart(ctx,{
+  type:"line",
+  data:{
+    labels:labels,
+    datasets:[{
+      label:"Price (₹)",
+      data:mandiData.rice.delhi,
+      borderColor:"#2e7d32",
+      fill:false,
+      tension:0.3
+    }]
+  }
+});
+
+// ---------------- UPDATE CHART ----------------
+
+function updateChart(){
+
+  const crop = document.getElementById("cropSelect").value;
+  const mandi = document.getElementById("mandiSelect").value;
+
+  const prices = mandiData[crop][mandi];
+
+  marketChart.data.datasets[0].data = prices;
+  marketChart.data.datasets[0].label =
+    crop.toUpperCase() + " Price in " + mandi.toUpperCase();
+
+  marketChart.update();
+
+  if(prices[5] > prices[0]){
+    document.getElementById("recommendation").innerHTML =
+    "📈 Forecast: Market Trending Upwards – Good time to sell!";
+  }else{
+    document.getElementById("recommendation").innerHTML =
+    "📉 Forecast: Market Declining – Consider storing crop.";
+  }
+}
+
+// ---------------- PROFIT CALCULATOR ----------------
+
+function calculateProfit(){
+
+  const crop = document.getElementById("cropSelect").value;
+  const mandi = document.getElementById("mandiSelect").value;
+  const qty = document.getElementById("production").value;
+
+  const latestPrice = mandiData[crop][mandi][5];
+
+  const profit = qty * latestPrice;
+
+  document.getElementById("profitResult").innerHTML =
+  "Estimated Revenue: ₹ " + profit;
+}
+
+// ---------------- DOWNLOAD REPORT ----------------
+
+function downloadReport(){
+
+  const crop = document.getElementById("cropSelect").value;
+  const mandi = document.getElementById("mandiSelect").value;
+
+  const content =
+  "Market Report\n\nCrop: " + crop +
+  "\nMandi: " + mandi +
+  "\nLatest Price: ₹ " + mandiData[crop][mandi][5];
+
+  const blob = new Blob([content], { type: "text/plain" });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Market_Report.txt";
+  link.click();
+}
+
+</script>
+
+</body>
+</html>

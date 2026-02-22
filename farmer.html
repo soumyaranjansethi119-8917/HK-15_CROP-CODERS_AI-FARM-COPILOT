@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart AI Farmer Dashboard - Complete Demo</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Segoe UI;
+  background:#f4f9f4;
+}
+
+header{
+  background:#2e7d32;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:20px;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+button{
+  padding:8px;
+  border:none;
+  background:#1b5e20;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+  margin-top:5px;
+}
+
+.emergency{
+  background:#c62828;
+}
+
+select{
+  padding:5px;
+  margin-top:5px;
+}
+
+#map{
+  height:250px;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🌾 Smart AI Farmer Dashboard 
+</header>
+
+<div class="container">
+
+<div class="card">
+<h3>🌦 Live Sensor Data</h3>
+<p id="temp"></p>
+<p id="rain"></p>
+<p id="moisture"></p>
+</div>
+
+<div class="card">
+<h3>💧 Irrigation Control</h3>
+<p>Status: <span id="irrigationStatus">OFF</span></p>
+<button onclick="toggleIrrigation()">Toggle Irrigation</button>
+</div>
+
+<div class="card">
+<h3>🚨 Emergency Monitor</h3>
+<p id="emergencyMsg">Monitoring...</p>
+</div>
+
+<div class="card">
+<h3>🎤 Voice Command</h3>
+<select id="language">
+  <option value="en-IN">English</option>
+  <option value="hi-IN">Hindi</option>
+  <option value="or-IN">Odia</option>
+  <option value="te-IN">Telugu</option>
+</select>
+<br>
+<button onclick="startVoice()">Start Voice</button>
+<p id="voiceOutput"></p>
+</div>
+
+<div class="card">
+<h3>📅 Smart Weekly Action Plan</h3>
+<button onclick="generateWeeklyPlan()">Generate Plan</button>
+<ul id="weeklyPlan"></ul>
+</div>
+
+<div class="card">
+<h3>🩺 Field Health</h3>
+<canvas id="healthChart"></canvas>
+</div>
+
+<div class="card">
+<h3>📍 Live Farm Location</h3>
+<div id="map"></div>
+<p id="locationText"></p>
+</div>
+
+</div>
+
+<script>
+
+// ---------------- LIVE SENSOR SIMULATION ----------------
+let temperature = 30;
+let rainfall = 20;
+let soilMoisture = 40;
+let irrigationOn = false;
+
+function updateSensors(){
+  temperature = (Math.random()*15 + 25).toFixed(1);
+  rainfall = (Math.random()*50).toFixed(1);
+  soilMoisture = (Math.random()*60).toFixed(1);
+
+  document.getElementById("temp").innerHTML = "Temperature: "+temperature+" °C";
+  document.getElementById("rain").innerHTML = "Rainfall: "+rainfall+" mm";
+  document.getElementById("moisture").innerHTML = "Soil Moisture: "+soilMoisture+" %";
+
+  checkEmergencyAuto();
+}
+
+setInterval(updateSensors,5000);
+updateSensors();
+
+// ---------------- IRRIGATION ----------------
+function toggleIrrigation(){
+  irrigationOn = !irrigationOn;
+  document.getElementById("irrigationStatus").innerHTML =
+    irrigationOn ? "ON 💧" : "OFF";
+}
+
+// ---------------- EMERGENCY SYSTEM ----------------
+function checkEmergencyAuto(){
+  let msg="";
+
+  if(temperature > 40){
+    msg="🔥 Heatwave Alert! Immediate irrigation required.";
+  }
+  else if(soilMoisture < 20){
+    msg="⚠ Soil moisture critically low!";
+  }
+  else{
+    msg="✅ All conditions normal.";
+  }
+
+  document.getElementById("emergencyMsg").innerHTML=msg;
+}
+
+// ---------------- VOICE SYSTEM ----------------
+function startVoice(){
+  const lang=document.getElementById("language").value;
+  const recognition=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
+  recognition.lang=lang;
+  recognition.start();
+
+  recognition.onresult=function(event){
+    const command=event.results[0][0].transcript.toLowerCase();
+    document.getElementById("voiceOutput").innerHTML="You said: "+command;
+    processCommand(command);
+  }
+}
+
+function speak(text){
+  const speech=new SpeechSynthesisUtterance(text);
+  speech.lang=document.getElementById("language").value;
+  speechSynthesis.speak(speech);
+}
+
+function processCommand(command){
+
+  if(command.includes("weather") || command.includes("मौसम") || command.includes("ପାଗ") || command.includes("పాగ")){
+    speak("Current temperature is "+temperature+" degree Celsius");
+  }
+
+  else if(command.includes("irrigation") || command.includes("सिंचाई") || command.includes("ପାନି") || command.includes("నీరు")){
+    toggleIrrigation();
+    speak("Irrigation toggled successfully");
+  }
+
+  else{
+    speak("Command not recognized");
+  }
+}
+
+// ---------------- WEEKLY PLAN ----------------
+function generateWeeklyPlan(){
+
+  let plan=[];
+  let stage="Flowering";
+  let tempVal=parseFloat(temperature);
+  let moistureVal=parseFloat(soilMoisture);
+
+  if(stage==="Flowering"){
+    plan.push("🌾 Apply micronutrient spray");
+  }
+
+  if(tempVal>38){
+    plan.push("🔥 Increase irrigation frequency");
+  }
+
+  if(moistureVal<30){
+    plan.push("💧 Immediate irrigation required");
+  }
+
+  plan.push("🐛 Pest inspection");
+  plan.push("🌱 Monitor crop growth");
+
+  const list=document.getElementById("weeklyPlan");
+  list.innerHTML="";
+
+  plan.forEach(task=>{
+    let li=document.createElement("li");
+    li.innerHTML=task;
+    list.appendChild(li);
+  });
+
+  speak("Weekly action plan generated");
+}
+
+// ---------------- CHART ----------------
+new Chart(document.getElementById("healthChart"),{
+ type:"line",
+ data:{
+  labels:["Week1","Week2","Week3","Week4"],
+  datasets:[{
+   label:"Field Health %",
+   data:[65,72,78,88],
+   borderColor:"green",
+   fill:false
+  }]
+ }
+});
+
+// ---------------- MAP + LIVE GPS ----------------
+var map=L.map('map').setView([20.5937,78.9629],5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(function(position){
+
+    const lat=position.coords.latitude;
+    const lon=position.coords.longitude;
+
+    map.setView([lat,lon],13);
+    L.marker([lat,lon]).addTo(map)
+      .bindPopup("📍 Your Farm Location").openPopup();
+
+    document.getElementById("locationText").innerHTML=
+      "Latitude: "+lat.toFixed(4)+" | Longitude: "+lon.toFixed(4);
+  });
+}
+
+</script>
+
+</body>
+</html>
